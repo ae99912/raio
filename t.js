@@ -85,11 +85,11 @@ function clickOnPolygon(e)
 {
   //alert('Дошло до коллекции объектов карты');
   // Получение ссылки на дочерний объект, на котором произошло событие.
-  let obj = e.get('target');
+  var obj = e.get('target');
   if(isMyPolygon(obj)) {
     // есть свойство
-    //let slct = obj.properties._data.myKeySelect;
-    let slct = fisSelect(obj);
+    //var slct = obj.properties._data.myKeySelect;
+    var slct = fisSelect(obj);
     setSelectRegion(obj, !slct);
   }
   var otv = fgetSelectedRegions();
@@ -111,7 +111,7 @@ function clickOnPolygon(e)
  */
 function fisSelect(obj)
 {
-  let clr = obj.options.get('fillColor');
+  var clr = obj.options.get('fillColor');
   return clr === colorSelect;
 }
 
@@ -125,24 +125,24 @@ function regPolygon(query, name, idreg)
 {
   var p;  // полигон
   // будем ждать "обещания, что нарисуется полигон"
-  let promise_reg = new Promise(function (resolve, reject) {
-    let url = "http://nominatim.openstreetmap.org/search";
+  var promise_reg = new Promise(function (resolve, reject) {
+    var url = "http://nominatim.openstreetmap.org/search";
     $.getJSON(url, {q: query, format: "json", polygon_geojson: 1, polygon_threshold: 0.001})
         .then(function (data) {
           $.each(data, function (ix, place) {
             if ("relation" == place.osm_type) {
               // 2. Создаем полигон с нужными координатами
               //var cpoint = coordinateswap(place.geojson.coordinates);
-              //let coords = place.geojson.coordinates;
+              //var coords = place.geojson.coordinates;
               if (place.geojson.type == 'MultiPolygon') {
-                let ar1 = place.geojson.coordinates;
-                for (let i = 0; i < ar1.length; i++) {
+                var ar1 = place.geojson.coordinates;
+                for (var i = 0; i < ar1.length; i++) {
                   // https://noteskeeper.ru/1/
                   faddPolygon(ar1[i], name, idreg);
                 }
               }
               if (place.geojson.type === 'Polygon') {
-                let ar1 = place.geojson.coordinates;
+                var ar1 = place.geojson.coordinates;
                 faddPolygon(ar1, name, idreg);
               }
             }
@@ -171,12 +171,12 @@ function regPolygon(query, name, idreg)
  */
 function faddPolygon(coords, regname, idreg)
 {
-  let ncors = coords.slice();
+  var ncors = coords.slice();
   coordinateswap(ncors);
   // Инициализация цветом выбранных регионов по строке параметров "регионы"
   // если строка кода региона есть в строке аргументов, то он будет выбранный
-  let colr = (Regions.indexOf(idreg)<0)? colorNoselect: colorSelect;
-  let p = new ymaps.Polygon(ncors, {
+  var colr = (Regions.indexOf(idreg)<0)? colorNoselect: colorSelect;
+  var p = new ymaps.Polygon(ncors, {
     hintContent:      regname,      // название региона
     myKeyIdRegion:    idreg,        // идентификатор региона
     myKeyMetka:       strKeyMetka,  // ключевая метка для опознания своих полигонов
@@ -194,18 +194,18 @@ function faddPolygon(coords, regname, idreg)
  */
 function fgetSelectedRegions()
 {
-  let mapa = new Map();
+  var mapa = new Map();
   Map1.geoObjects.each(function (elm) {
     if(isMyPolygon(elm)) {
       // проверим выбран полигон ? (окрашен в нужный цвет)
       if(fisSelect(elm)) {
-        let idreg = elm.properties._data.myKeyIdRegion;  // код региона
+        var idreg = elm.properties._data.myKeyIdRegion;  // код региона
         mapa.set(idreg, 1);
       }
     }
   });
-  let str = '', sep ='';
-  let par = strRegs;
+  var str = '', sep ='';
+  var par = strRegs;
   mapa.forEach(function (value, key, map) {
     str = par + str + sep + key;
     sep = ','; par = '';
@@ -252,12 +252,12 @@ function  setSelectRegion(obj, slct)
  */
 function coordinateswap(coordinates)
 {
-  //let cnt = 0, x = 0, y = 0;
+  //var cnt = 0, x = 0, y = 0;
   coordinates[0].forEach(function(point, i, arr) {
     //console.log( i + ": " + item/* + " (массив:" + arr + ")" */);
     //console.log(".");
     // поменяем координаты местами
-    let a = point[0];
+    var a = point[0];
     point[0] = point[1];
     point[1] = a;
     if (MyBounds[0].length < 2) {
@@ -445,9 +445,9 @@ function init2() {
  */
 function fcolorRegion(objectId, collection)
 {
-  let object = collection.getById(objectId);
+  var object = collection.getById(objectId);
   if (object && object.options) {
-    let col = object.options.fillColor;
+    var col = object.options.fillColor;
     // console.log("цвет объекта " + col);
     return col;
   }
@@ -491,13 +491,13 @@ function getSelRegs(collection)
  */
 function defineRegion()
 {
-  let i, sr, strs;
+  var i, sr, strs;
   strs = document.location.search;
   i = strs.indexOf(strRegs);  // есть строка с аргументами районами-региона?
   if (i < 0) {
     // регион явно в аргументах не задан
     // ищем в html параграф с id = "defaultRegion"
-    let dr = document.getElementById('defaultRegion');
+    var dr = document.getElementById('defaultRegion');
     if(dr) {
       sr = dr.innerText;
     } else {

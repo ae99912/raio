@@ -1,3 +1,11 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: ae
+ * Date: 18.08.2019
+ * Time: 23:33
+ */
+echo <<< _EOF
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,7 +48,6 @@
             <div id="ymap"></div>
         </td>
         <td>
-
             <ul>
                 <li><a href="?regs=17">Владимир</a></li>
                 <li><a href="?regs=24">Иваново</a></li>
@@ -61,3 +68,5 @@
 <script src="t.js" type="text/javascript"></script>
 </body>
 </html>
+
+_EOF;
