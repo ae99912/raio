@@ -18,8 +18,8 @@ var colorSelect  = '#aa1314';
 var colorNoselect = '#3f3fa2';
 var strKeyMetka = '0305396879554012335'; // ключевая метка для наших полигонов
 var Regions = defineRegion();  // определить регионы картирования (2 цифры)
-var promise_regions = []; // массив обещаний
-var MyBounds = [[],[]];    // границы регионов
+var promise_regions = [];   // массив обещаний
+var MyBounds = [[],[]];     // границы регионов
 //
 ymaps.ready(f1);
 
@@ -49,15 +49,8 @@ function f1() {
   Map1.geoObjects.events.add('click', clickOnPolygon);
   //Map1.events.add('click', clickOnPolygon);
 
-  // var p1 = Promise.all(promise_regions);
-  // p1.then(function (val) {
-  //   let str = "promise end " + val;
-  //   console.log(str);
-  // });
   // ждем исполнения всех промисов после загрузки полигонов
   Promise.all(promise_regions).then(fallpromises);
-  //console.log("Центр " + Cpoint);
-  //Map1.setBounds([[55,38.8],[57,39]]);
 }
 
 /**
@@ -98,9 +91,6 @@ function clickOnPolygon(e)
   var uri = pan + otv;
   window.history.pushState('', tit, uri);
   window.history.pathname  = uri;
-  //console.log("Нажал: " + otv);
-  // var bound = Map1.geoObjects.getBounds();
-  // console.log("границы: " + bound);
   // https://tech.yandex.ru/maps/jsapi/doc/2.1/dg/concepts/events-docpage/
   e.stopPropagation();
 }
@@ -126,15 +116,21 @@ function regPolygon(query, name, idreg)
   var p;  // полигон
   // будем ждать "обещания, что нарисуется полигон"
   var promise_reg = new Promise(function (resolve, reject) {
+    // Новоорский  район, Оренбургская область
+    // http://nominatim.openstreetmap.org/search/
     var url = "http://nominatim.openstreetmap.org/search";
     $.getJSON(url, {q: query, format: "json", polygon_geojson: 1, polygon_threshold: 0.001})
         .then(function (data) {
           $.each(data, function (ix, place) {
-            if ("relation" == place.osm_type) {
+            if ("relation" === place.osm_type) {
+              var strm = JSON.stringify(data);
+              $.post("putd.php", {oktmo: idreg, djso: strm}).then(function(dat) {
+                console.log(idreg);
+              });
               // 2. Создаем полигон с нужными координатами
               //var cpoint = coordinateswap(place.geojson.coordinates);
               //var coords = place.geojson.coordinates;
-              if (place.geojson.type == 'MultiPolygon') {
+              if (place.geojson.type === 'MultiPolygon') {
                 var ar1 = place.geojson.coordinates;
                 for (var i = 0; i < ar1.length; i++) {
                   // https://noteskeeper.ru/1/
@@ -147,15 +143,9 @@ function regPolygon(query, name, idreg)
               }
             }
           });
-          //console.log("центр " + Cpoint);
-          //Map1.panTo(Cpoint,7);
-          //Map1.setCenter(Cpoint);
-          // Promise
           resolve("добавили " + idreg);
         }, function (err) {
-          console.log(err);
-          // Promise
-          //reject("ошибка получения кординат");
+          console.log("error: " + err);
           resolve("ошибка чтения региона " + idreg);
         });
   });
@@ -254,8 +244,6 @@ function coordinateswap(coordinates)
 {
   //var cnt = 0, x = 0, y = 0;
   coordinates[0].forEach(function(point, i, arr) {
-    //console.log( i + ": " + item/* + " (массив:" + arr + ")" */);
-    //console.log(".");
     // поменяем координаты местами
     var a = point[0];
     point[0] = point[1];
@@ -277,165 +265,6 @@ function coordinateswap(coordinates)
   // }
 }
 
-function init2() {
-  // Создадим собственный макет RegionControl.
-  var RegionControlLayout = ymaps.templateLayoutFactory.createClass('', {
-    build: function () {
-      RegionControlLayout.superclass.build.call(this);
-      this.handleClick = ymaps.util.bind(this.handleClick, this);
-      $(this.getParentElement)
-        .on('click', 'a#regions', this.handleClick);
-    },
-    clear: function () {
-      $(this.getParentElement)
-        .off('click', 'a#regions', this.handleClick);
-      RegionControlLayout.superclass.clear.call(this);
-    },
-    handleClick: function (e) {
-      e.preventDefault();
-      var $target = $(e.currentTarget);
-      var state = this.getData().state;
-      var newValues = ymaps.util.extend({}, state.get('values'));
-      if (!$target.hasClass('active')) {
-        newValues[$target.data('param')] = $target.data('id');
-        state.set('values', newValues);
-      }
-    }
-  });
-  // Наследуем класс нашего контрола от ymaps.control.Button.
-  RegionControl = ymaps.util.defineClass(function (parameters) {
-    RegionControl.superclass.constructor.call(this, parameters);
-  }, ymaps.control.Button, /** @lends ymaps.control.Button */{
-    onAddToMap: function (map) {
-      RegionControl.superclass.onAddToMap.call(this, map);
-      this.setupStateMonitor();
-      this.loadRegions(this.state.get('values'));
-    },
-
-    onRemoveFromMap: function (map) {
-      map.geoObjects.remove(this.regions);
-      this.clearStateMonitor();
-      RegionControl.superclass.onRemoveFromMap.call(this, map);
-    },
-
-    setupStateMonitor: function () {
-      this.stateMonitor = new ymaps.Monitor(this.state);
-      this.stateMonitor.add('values', this.handleStateChange, this);
-    },
-
-    clearStateMonitor: function () {
-      this.stateMonitor.removeAll();
-    },
-
-    handleStateChange: function (params) {
-      this.loadRegions(params);
-    },
-
-    handleRegionsLoaded: function (res) {
-      if(this.regions){
-        map.geoObjects.remove(this.regions);
-      }
-
-      this.regions = new ymaps.ObjectManager();
-      this.regions
-        .add(res.features.map(function (feature) {
-          feature.id = feature.properties.iso3166;
-          feature.options = {
-            strokeColor: '#ffffff',
-            strokeOpacity: 0.4,
-            fillColor: colorNoselect,
-            fillOpacity: 0.8,
-            hintCloseTimeout: 0,
-            hintOpenTimeout: 0
-          };
-          return feature;
-        }));
-      map.geoObjects.add(this.regions);
-
-      this.selectedRegionId = '';
-      this.regions.events
-        .add('mouseenter', function (e) {
-          var id = e.get('objectId');
-          this.regions.objects.setObjectOptions(id, {strokeWidth: 2});
-        }, this)
-        .add('mouseleave', function (e) {
-          var id = e.get('objectId');
-          if (this.selectedRegionId !== id) {
-            this.regions.objects.setObjectOptions(id, {strokeWidth: 1});
-          }
-        }, this)
-        .add('click', function (e) {
-          var id = e.get('objectId');
-          var regcol = fcolorRegion(id, this.regions.objects);
-          var colorNew = (regcol === colorSelect) ? colorNoselect: colorSelect;
-          this.regions.objects.setObjectOptions(id,
-            {strokeWidth: 2, fillColor: colorNew}
-          );
-          this.selectedRegionId = id;
-          //
-          //console.log("Click mouse: " + id);
-          getSelRegs(this.regions.objects);
-          //
-        }, this);
-      this.getMap().setBounds(
-        this.regions.getBounds(),
-        {checkZoomRange: true}
-      );
-      //
-      // раскрасим выделенные регионы
-      initSelColorRegions(this.regions.objects);
-    },
-
-    loadRegions: function (params) {
-      this.disable();
-      return ymaps.borders.load(params.region, params)
-        .then(this.handleRegionsLoaded, this)
-        .always(this.enable, this);
-    }
-  });
-
-  // пример
-  // https://tech.yandex.ru/maps/jsbox/2.1/regions_districts
-  // .
-
-  var map = new ymaps.Map('map', {
-    center: [65, 100],
-    zoom: 2,
-    //type: null,
-    controls: ['zoomControl']
-  },{
-    restrictMapArea: [[10, 10], [85,-160]]
-  });
-  map.controls.get('zoomControl').options.set({size: 'small'});
-
-  // Создадим экземпляр RegionControl.
-  regionControl = new RegionControl({
-    state: {
-      enabled: true,
-      values: {
-        region: 'RU',
-        lang: 'ru',
-        quality: '2'
-      }
-    } ,
-    options: {
-      layout: RegionControlLayout
-    }
-    // ,
-    // float: 'left',
-    // maxWidth: [1200]
-  });
-
-  // Добавим контрол на карту.
-  map.controls.add(regionControl);
-  /*
-      // Узнавать о изменениях параметров RegionControl можно следующим образом.
-       regionControl.events.add('statechange', function (e) {
-           console.log(e.get('target').get('values'));
-       });
-  */
-
-}
 
 /**
  * Получить цвет объекта из коллекции
@@ -448,42 +277,9 @@ function fcolorRegion(objectId, collection)
   var object = collection.getById(objectId);
   if (object && object.options) {
     var col = object.options.fillColor;
-    // console.log("цвет объекта " + col);
     return col;
   }
   return '?';
-}
-
-/**
- * получить список выбранных регионов
- * @param collection - коллеция регионов - гео-объектов из Яндекс.API
- */
-function getSelRegs(collection)
-{
-  var objs = collection.getAll();
-  var n = objs.length;
-  var par = strRegs;   // параметр "регионы"
-  var otv = '';
-  var sep = '';
-  for (var i=0; i<n; i++) {
-    var reg = objs[i];
-    if(reg && reg.options) {
-      var col = reg.options.fillColor;
-      if(col === colorSelect) {
-        // числовые коды регионов
-        //otv = par + otv + sep + iso3166toCod(reg.id);
-        // коды по ISO3166
-        otv = par + otv + sep + reg.id;
-        par = '';  sep = ',';
-      }
-    }
-  }
-  var tit = document.title;
-  var pan = document.location.pathname;
-  var uri = pan + otv;
-  window.history.pushState('', tit, uri);
-  window.history.pathname  = uri;
-  console.log(otv);
 }
 
 /**

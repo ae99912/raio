@@ -15,15 +15,15 @@ require_once "common.php";
 printHeadPage("Данные ГЕО");
 
 // дополнительно подсчитаем кол-во документов
-$sql ="SELECT oktmo, query,short
+$sql ="SELECT oktmo, zapros,kratko
        FROM raio_oktmo";
 echo "</tbody></table>\n";
 echo <<<_EOF
 <table width="100%" class="spis" id="myTable">
 <thead><tr>
 <th class="spis">1</th>
-<th width="8%" class="spis">2</th>
-<th width="6%" class="spis nosort" >3</th>
+<th width="18%" class="spis">2</th>
+<th width="36%" class="spis nosort" >3</th>
 </tr></thead>
 <tbody class="hightlight">
 

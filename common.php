@@ -63,10 +63,28 @@ function validateDate($dat, $format = 'Y-m-d')
 /**
  * Формурует начало страницы html
  * @param string $title    заголовок страницы
+ */
+function  printHeadPage($title)
+{
+  echo <<<_EOF
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>$title</title>
+</head>
+<body>
+
+_EOF;
+}
+
+/**
+ * Формурует начало страницы html
+ * @param string $title    заголовок страницы
  * @param string $timeOut  время перехода на другую страницу
  * @param string $url      URL страницы, куда перейти
  */
-function  printHeadPage($title, $timeOut='', $url='')
+function  printHeadPage1($title, $timeOut='', $url='')
 {
   $t = '';
   if(!empty($timeOut)) {
@@ -93,7 +111,11 @@ _EOF;
  */
 function printEndPage()
 {
-  echo "\n</body>\n</html>\n";
+  echo <<<_EOF
+</body>
+</html>
+
+_EOF;
 }
 
 /**
@@ -107,16 +129,6 @@ function  printPopupPage($title, $timeOut, $url)
   printHeadPage(strip_tags($title), $timeOut, $url);
   echo "<p>$title. <a href='$url' title='вернуться'>&lt;&lt;&lt;</a></p>";
   printEndPage();
-}
-
-/**
- * Переход в указанное место URL
- * @param string $url  URL перехода
- */
-function  gotoLocation($url)
-{
-  header("HTTP/1.1 301 Moved Permanently");
-  header("Location: " . $url);
 }
 
 /**
@@ -220,106 +232,4 @@ function  s2s($str)
   return htmlspecialchars($str, ENT_QUOTES);
 }
 
-/**
- * Проверить время активности пользователя (тайм-аут активности) сек
- * @param int $tmout время неактивности, сек
- */
-function  test_timeout_user_actitiviti($tmout)
-{
-  global $Uid;
-  // время ожидания активности пользователя
-  $tsnow = date('U'); // текущее время
-  $tsses = intval($_SESSION['datatime_work_metka']);
-  $_SESSION['datatime_work_metka'] = $tsnow;
-  if($tsses > 0 && ($tsnow - $tsses) > $tmout) {
-    unset($_SESSION['Uid']);
-    $Uid = 0;
-    $_SESSION["error_message"] = "<span style='color: blue'>Истекло время ожидания...</span>";
-  }
-}
 
-/**
- * формирует форму с тэгом select и элементами option для переключения названного параметра.
- * форма выбора региона "автозапуском" https://javatalks.ru/topics/22399
- * @param string $nameParam  название параметра для выбора региона
- * @return string строка с формой
- */
-function  make_FormSelectRegion($nameParam)
-{
-  $myself = $_SERVER['PHP_SELF'];
-  $reg = intval(getParSes($nameParam));
-//  $str = <<<_EOF
-//  <form action='$myself' method='post' name='FormSelReg'>
-//  <select size=1 name='$nameParam' onchange="document.forms['FormSelReg'].submit()">
-//_EOF;
-  $str  = "<form action='$myself' method='post'>";
-  $str .= "<select size=1 name='$nameParam' onchange='this.form.submit()'>";
-  $rst = queryDb("SELECT id,nam FROM Regions WHERE id<100 ORDER BY id");
-  while(list($fid,$fnam)=fetchRow($rst)) {
-    if($fid == 0) { $fnam = "(все регионы)"; }
-    $s =($reg == $fid)? 'selected': '';
-    $str .= "<option value='$fid' $s>$fnam</option>";
-  }
-  $rst->close();
-  $str .= "</select></form>";
-  return $str;
-}
-
-/**
- * Вернуть значение парметра из параметра формы или сессионной переменной
- * и задать этот параметр в сессию, а если параметр формы не задан, то прочитать
- * этот парметр из сессии.
- * @param $namePar
- * @return mixed
- */
-function getParSes($namePar)
-{
-  if(array_key_exists($namePar, $_REQUEST)) {
-    // вызвали форму
-    $par = $_REQUEST[$namePar];
-    $_SESSION[$namePar] = $par;
-  } else {
-    // форму не вызывали, проверим сессионную переменную
-    $par = $_SESSION[$namePar];
-  }
-  return $par;
-}
-
-/**
- * Определить возможность редактирования оператора, если uid больше 1 и меньше 100,
- * то это супер-пользователь, который может редактировать любой регион.
- * Если uid > 100 то можно редактировать только свой регион.
- * @param int $op_id  код оператора
- * @return bool можно редактировать
- */
-function  isCanEditOp($op_id)
-{
-  global $Uid, $Reg;
-  if($Uid <= 1)
-    return false;
-  if($Uid < 100)
-    return true;
-  // установим признак возможности редактирования строки оператора по региону
-  $re = sprintf("%02d", $Reg);  // двузначный номер региона
-  $canEditOp = intval(getVal("SELECT COUNT(*) FROM Opers WHERE op_id=$op_id AND regs LIKE '%$re%'"));
-  return  $canEditOp != 0;
-}
-
-/**
- * Определить возможность редактирования конкретной записи, по номеру региона
- * если uid 2-99,то это супер-пользователь, который может редактировать любой регион.
- * Если uid > 100 то можно редактировать только свой регион.
- * @param int $regstr номер региона строки файла
- * @return bool можно редактировать
- */
-function  isCanEditRec($regstr)
-{
-  global $Uid, $Reg;
-  if($Uid <= 1)
-    return false;
-  if($Uid < 100)
-    return true;
-  if($regstr == $Reg)
-    return true;
-  return false;
-}
