@@ -12,15 +12,11 @@ require_once "common.php";
 require_once ".proxy.php";
 
 $kod = $_REQUEST['oktmo'];
-
-echo "<pre>\r\n";
-echo "($kod) \r\n";
-$sql = "SELECT oktmo,zapros,geojson FROM raio_oktmo";
+$kodi = str_replace("'","",$kod);
+$sql = "SELECT oktmo,zapros,geojson FROM raio_oktmo WHERE oktmo='$kodi'";
 $res = queryDb($sql);
-while(list($oktmo,$zapros,$geojson) = fetchRow($res)) {
-  echo $oktmo;
-  if(empty($geojson) || strlen($geojson) < 1) {
-    echo " ";
+list($zapros,$geojson) = fetchRow($res);
+if(strlen($geojson) < 32) {
     //  https://nominatim.openstreetmap.org/search/
     //   .
     $url = 'https://nominatim.openstreetmap.org/search/';
@@ -31,20 +27,21 @@ while(list($oktmo,$zapros,$geojson) = fetchRow($res)) {
     echo $geo;
     if(strlen($geo) > 255) {
       $stmt = $My_Db -> prepare("UPDATE raio_oktmo SET geojson=? WHERE oktmo=?;");
-      $stmt -> bind_param('ss', $geo, $oktmo);
+      $stmt -> bind_param('ss', $geo, $kodi);
       if( ! $stmt->execute()) {
-        echo " error " . $php_errormsg;
+        //echo " error " . $php_errormsg;
       } else {
-        echo " ok";
+        //echo " ok";
       }
       // закрываем запрос
       $stmt->close();
+      $geojson = $geo;
+    } else {
+      die("");  // ничего нет
     }
-
-  }
-  echo "\r\n";
 }
-echo "\r\n</pre>";
+
+echo $geojson;
 
 /**
  * Чтение URI через прокси

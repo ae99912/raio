@@ -118,8 +118,10 @@ function regPolygon(query, name, idreg)
   var promise_reg = new Promise(function (resolve, reject) {
     // Новоорский  район, Оренбургская область
     // http://nominatim.openstreetmap.org/search/
-    var url = "http://nominatim.openstreetmap.org/search";
-    $.getJSON(url, {q: query, format: "json", polygon_geojson: 1, polygon_threshold: 0.001})
+    var url;
+    //url = "http://nominatim.openstreetmap.org/search";
+    url = "que.php";
+    $.getJSON(url, {oktmo: idreg}) // {q: query, format: "json", polygon_geojson: 1, polygon_threshold: 0.001}
         .then(function (data) {
           $.each(data, function (ix, place) {
             if ("relation" === place.osm_type) {
