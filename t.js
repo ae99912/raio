@@ -1,6 +1,8 @@
 /*
  * Copyright (c) 2019. Aleksey Eremin
  *
+ * 2019-08-19 21:24
+ *
  */
 
 /*
@@ -119,9 +121,9 @@ function regPolygon(query, name, idreg)
     // Новоорский  район, Оренбургская область
     // http://nominatim.openstreetmap.org/search/
     var url;
-    //url = "http://nominatim.openstreetmap.org/search";
+    // url = "http://nominatim.openstreetmap.org/search";
     url = "que.php";
-    $.getJSON(url, {oktmo: idreg}) // {q: query, format: "json", polygon_geojson: 1, polygon_threshold: 0.001}
+    $.getJSON(url, {q: idreg}) // {q: query, format: "json", polygon_geojson: 1, polygon_threshold: 0.001}
         .then(function (data) {
           $.each(data, function (ix, place) {
             if ("relation" === place.osm_type) {
@@ -132,16 +134,16 @@ function regPolygon(query, name, idreg)
               // 2. Создаем полигон с нужными координатами
               //var cpoint = coordinateswap(place.geojson.coordinates);
               //var coords = place.geojson.coordinates;
+              var arc;
               if (place.geojson.type === 'MultiPolygon') {
-                var ar1 = place.geojson.coordinates;
-                for (var i = 0; i < ar1.length; i++) {
-                  // https://noteskeeper.ru/1/
-                  faddPolygon(ar1[i], name, idreg);
+                arc = place.geojson.coordinates;
+                for (var i = 0; i < arc.length; i++) {
+                  faddPolygon(arc[i], name, idreg);
                 }
               }
               if (place.geojson.type === 'Polygon') {
-                var ar1 = place.geojson.coordinates;
-                faddPolygon(ar1, name, idreg);
+                arc = place.geojson.coordinates;
+                faddPolygon(arc, name, idreg);
               }
             }
           });

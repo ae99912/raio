@@ -9,38 +9,35 @@
  *  Запросить в OSM гео-данные на область
  */
 require_once "common.php";
-require_once ".proxy.php";
-
-$kod = $_REQUEST['oktmo'];
+//require_once ".proxy.php";
+$kod = $_REQUEST['q'];
 $kodi = str_replace("'","",$kod);
-$sql = "SELECT oktmo,zapros,geojson FROM raio_oktmo WHERE oktmo='$kodi'";
+$sql = "SELECT zapros,geojson FROM raio_oktmo WHERE oktmo='$kodi'";
 $res = queryDb($sql);
 list($zapros,$geojson) = fetchRow($res);
 if(strlen($geojson) < 32) {
-    //  https://nominatim.openstreetmap.org/search/
-    //   .
+    // читаем данные из OSM
+    // https://nominatim.openstreetmap.org/search/
     $url = 'https://nominatim.openstreetmap.org/search/';
-    $s = '?format=json&polygon_geojson=1&polygon_threshold=0.001';
-    $sq = '&q=' . rawurlencode($zapros);
+    $s   = '?format=json&polygon_geojson=1&polygon_threshold=0.001';
+    $sq  = '&q=' . rawurlencode($zapros);
     $uri = $url . $s . $sq;
-    $geo =  $contents = getURI($uri);
-    echo $geo;
+    $geo = getURI($uri);
     if(strlen($geo) > 255) {
-      $stmt = $My_Db -> prepare("UPDATE raio_oktmo SET geojson=? WHERE oktmo=?;");
-      $stmt -> bind_param('ss', $geo, $kodi);
-      if( ! $stmt->execute()) {
-        //echo " error " . $php_errormsg;
+      $stmt = $My_Db -> prepare("UPDATE raio_oktmo SET geojson=? WHERE oktmo='$kodi';");
+      $stmt -> bind_param('s', $geo);
+      if($stmt->execute()) {
+        // echo 'ok';
       } else {
-        //echo " ok";
+        // echo " error " . $php_errormsg;
       }
       // закрываем запрос
       $stmt->close();
       $geojson = $geo;
     } else {
-      die("");  // ничего нет
+      die("[]");  // ничего нет
     }
 }
-
 echo $geojson;
 
 /**
@@ -51,17 +48,20 @@ echo $geojson;
 function getURI($uri)
 {
   global $proxy_server, $proxy_user;
-  // file_get_contents($uri);
-  $proxy = $proxy_server; // 'ip_address:port'
-  $uauth = $proxy_user;   // 'username:userpassword';
+  //return file_get_contents($uri);
+
   $ch = curl_init();
   curl_setopt($ch, CURLOPT_URL, $uri);
   curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
   curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; ru; rv:1.9.0.1) Gecko/2008070208');
-  curl_setopt($ch, CURLOPT_PROXY, $proxy);
-  curl_setopt($ch,CURLOPT_HTTPPROXYTUNNEL, 0);
-  curl_setopt($ch, CURLOPT_PROXYUSERPWD, $uauth);
-  curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_ANY);
+
+//  $proxy = $proxy_server; // 'ip_address:port'
+//  $uauth = $proxy_user;   // 'username:userpassword';
+//  curl_setopt($ch, CURLOPT_PROXY, $proxy);
+//  curl_setopt($ch, CURLOPT_HTTPPROXYTUNNEL, 0);
+//  curl_setopt($ch, CURLOPT_PROXYUSERPWD, $uauth);
+//  curl_setopt($ch, CURLOPT_PROXYAUTH, CURLAUTH_ANY);
+
   $ss=curl_exec($ch);
   curl_close($ch);
   return $ss;

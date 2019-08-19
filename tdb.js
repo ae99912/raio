@@ -311,3 +311,13 @@ function makeListOktmo(code) {
   return str;
 }
 
+function listRegDB(code, callback)
+{
+  var cod = code.substr(0,2);
+  for(var i=0; i < db_oktmo.length; i++) {
+    var val = db_oktmo[i];
+    if((''+val[0]).substr(0,2) == cod) {
+      callback(val,i);
+    }
+  }
+}
