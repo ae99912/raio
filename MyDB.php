@@ -14,7 +14,7 @@ $cccmydb = array (
     'db'   => 'raio',
     'host' => 'localhost',
     'usr'  => 'raio',
-    'pwd'  => '12345678'
+    'pwd'  => '1234ave5678'
 );
 
 class MyDB

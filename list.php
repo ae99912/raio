@@ -34,12 +34,12 @@ $res = queryDb($sql);
 $cnt = 0;
 while(list($okt,$que,$shr,$geo) = fetchRow($res)) {
   $cnt++;
-  $okt;     // ОКТМО
-  $que;   // запрос
-  $shr;    // краткое наименование
+//  $okt;   // ОКТМО
+//  $que;   // запрос
+//  $shr;   // краткое наименование
 
   echo "<tr id=\"O$okt\">";
-  echo "<td >$okt</td>";
+  echo "<td >$okt </td>";
   echo "<td >$shr</td>";
   echo "<td class='spis'><a href='opdocs.php?op_id=$okt'>$que</a></td>";
   echo "<td class='spis'>$geo</td>";

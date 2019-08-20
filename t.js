@@ -45,14 +45,15 @@ function f1() {
   //
   // загрузка районов пегиона
   // код ОКТМО первые 2 знака - главный регион
-  listReg(Regions.substr(0,2), function(value){
-    regPolygon(value[1], value[2], value[0]);
+  listRegDB(Regions.substr(0,2), function(value){
+    regPolygon(value.o, value.k);
   });
   Map1.geoObjects.events.add('click', clickOnPolygon);
   //Map1.events.add('click', clickOnPolygon);
 
   // ждем исполнения всех промисов после загрузки полигонов
-  Promise.all(promise_regions).then(fallpromises);
+  // перенесли в промис после чтения списка регионов из БД
+  // Promise.all(promise_regions).then(fallpromises);
 }
 
 /**
@@ -109,49 +110,49 @@ function fisSelect(obj)
 
 /**
  * Создать полигоны для региона
- * @param query запрос к OSM
- * @param name  название на подсказке
  * @param idreg код региона
+ * @param name  название на подсказке
+ * query запрос к OSM
  */
-function regPolygon(query, name, idreg)
+function regPolygon(idreg, name)
 {
   var p;  // полигон
   // будем ждать "обещания, что нарисуется полигон"
   var promise_reg = new Promise(function (resolve, reject) {
     // Новоорский  район, Оренбургская область
     // http://nominatim.openstreetmap.org/search/
-    var url;
     // url = "http://nominatim.openstreetmap.org/search";
-    url = "que.php";
-    $.getJSON(url, {q: idreg}) // {q: query, format: "json", polygon_geojson: 1, polygon_threshold: 0.001}
-        .then(function (data) {
-          $.each(data, function (ix, place) {
-            if ("relation" === place.osm_type) {
-              var strm = JSON.stringify(data);
-              $.post("putd.php", {oktmo: idreg, djso: strm}).then(function(dat) {
-                console.log(idreg);
-              });
-              // 2. Создаем полигон с нужными координатами
-              //var cpoint = coordinateswap(place.geojson.coordinates);
-              //var coords = place.geojson.coordinates;
-              var arc;
-              if (place.geojson.type === 'MultiPolygon') {
-                arc = place.geojson.coordinates;
-                for (var i = 0; i < arc.length; i++) {
-                  faddPolygon(arc[i], name, idreg);
-                }
-              }
-              if (place.geojson.type === 'Polygon') {
-                arc = place.geojson.coordinates;
-                faddPolygon(arc, name, idreg);
+    $.getJSON("que.php", {q: idreg}) // {q: query, format: "json", polygon_geojson: 1, polygon_threshold: 0.001}
+      .done(function (data) {
+        // получили JSON данные, будем перебирать
+        $.each(data, function (ix, place) {
+          if ("relation" === place.osm_type) {
+            // положим в БД данные о регионе
+            // var strm = JSON.stringify(data);
+            // $.post("putd.php", {oktmo: idreg, djso: strm}).then(function(dat) {
+            //   console.log("обновим данные по региону: " + idreg);
+            // });
+            // 2. Создаем полигон с нужными координатами
+            //var coords = place.geojson.coordinates;
+            var arc;
+            if (place.geojson.type === 'MultiPolygon') {
+              arc = place.geojson.coordinates;
+              for (var i = 0; i < arc.length; i++) {
+                faddPolygon(arc[i], name, idreg);
               }
             }
-          });
-          resolve("добавили " + idreg);
-        }, function (err) {
-          console.log("error: " + err);
-          resolve("ошибка чтения региона " + idreg);
+            if (place.geojson.type === 'Polygon') {
+              arc = place.geojson.coordinates;
+              faddPolygon(arc, name, idreg);
+            }
+          }
         });
+        resolve("добавили " + idreg);
+      })
+      .fail(function (xhr, textStatus, errorThrow) {
+        console.log("error: " + textStatus + " " + errorThrow);
+        resolve("ошибка чтения региона " + idreg);
+      });
   });
   // запомним
   promise_regions.push(promise_reg);
@@ -308,4 +309,22 @@ function defineRegion()
     sr = strs.substr(i + strRegs.length); // регион или список регионов
   }
   return sr.length >= 2? sr: "50"; // XX регион по-умолчанию
+}
+
+/**
+ * Список регионов, начинающихся с code
+ * @param code    код области
+ * @param callback  функция для обратного вызова
+ */
+function listRegDB(code, callback)
+{
+  var cod = code.substr(0,2);
+  var url = "lor.php";
+  $.getJSON(url,{gok: cod}).done(function (data) {
+    $.each(data, function (key,val) {
+      callback(val, key);
+    });
+    // будем ждать исполнения всех промисов после загрузки полигонов
+    Promise.all(promise_regions).then(fallpromises);
+  });
 }
