@@ -45,24 +45,41 @@ function f1() {
   //
   // загрузка районов пегиона
   // код ОКТМО первые 2 знака - главный регион
-  listRegDB(Regions.substr(0,2), function(value){
-    regPolygon(value.o, value.k);
-  });
+  loadRegs();
+  //
   Map1.geoObjects.events.add('click', clickOnPolygon);
   //Map1.events.add('click', clickOnPolygon);
 
   // ждем исполнения всех промисов после загрузки полигонов
   // перенесли в промис после чтения списка регионов из БД
-  // Promise.all(promise_regions).then(fallpromises);
+  // Promise.all(promise_regions).then(fAllPromises);
+}
+
+/**
+ * Загрузить полигоны для регионов
+ */
+function loadRegs()
+{
+  // код области
+  var cod = Regions.substr(0,2);
+  //
+  $.getJSON("lor.php",{gok: cod}).done(function (data) {
+    $.each(data, function (key,val) {
+      // загрузить регионы и сформировать промисы
+      regPolygon(val.o, val.k);
+    });
+    // будем ждать  исполнения всех промисов после загрузки полигонов
+    Promise.all(promise_regions).then(fAllPromises);
+  });
 }
 
 /**
  * по завершению всех промисов переместить карту на границы
  * @param values
  */
-function fallpromises(values)
+function fAllPromises(values)
 {
-  console.log("обещания выполнены " + values.length);
+  console.log("выполнено обещаний " + values.length);
   //Map1.setCenter(Cpoint);
   if(MyBounds[0].length >= 2) {
     Map1.setBounds(MyBounds);
@@ -116,7 +133,6 @@ function fisSelect(obj)
  */
 function regPolygon(idreg, name)
 {
-  var p;  // полигон
   // будем ждать "обещания, что нарисуется полигон"
   var promise_reg = new Promise(function (resolve, reject) {
     // Новоорский  район, Оренбургская область
@@ -309,22 +325,4 @@ function defineRegion()
     sr = strs.substr(i + strRegs.length); // регион или список регионов
   }
   return sr.length >= 2? sr: "50"; // XX регион по-умолчанию
-}
-
-/**
- * Список регионов, начинающихся с code
- * @param code    код области
- * @param callback  функция для обратного вызова
- */
-function listRegDB(code, callback)
-{
-  var cod = code.substr(0,2);
-  var url = "lor.php";
-  $.getJSON(url,{gok: cod}).done(function (data) {
-    $.each(data, function (key,val) {
-      callback(val, key);
-    });
-    // будем ждать исполнения всех промисов после загрузки полигонов
-    Promise.all(promise_regions).then(fallpromises);
-  });
 }
