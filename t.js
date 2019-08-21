@@ -61,7 +61,7 @@ function f1() {
 function loadRegs()
 {
   // код области
-  var cod = Regions.substr(0,2);
+  var cod = Regions.substr(0,2) + '000000';
   //
   $.getJSON("lor.php",{gok: cod}).done(function (data) {
     $.each(data, function (key,val) {
