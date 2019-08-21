@@ -135,14 +135,16 @@ function regPolygon(idreg, name)
 {
   // будем ждать "обещания, что нарисуется полигон"
   var promise_reg = new Promise(function (resolve, reject) {
-    // Новоорский  район, Оренбургская область
+    // Коды ОКТМО и ОКАТО
+    // https://classifikators.ru/oktmo/
+    // Nominatim поисковая машина на OpenStreetMap
     // http://nominatim.openstreetmap.org/search/
     // url = "http://nominatim.openstreetmap.org/search";
     $.getJSON("que.php", {q: idreg}) // {q: query, format: "json", polygon_geojson: 1, polygon_threshold: 0.001}
       .done(function (data) {
         // получили JSON данные, будем перебирать
         $.each(data, function (ix, place) {
-          if ("relation" === place.osm_type) {
+          if("relation" === place.osm_type) {
             // положим в БД данные о регионе
             // var strm = JSON.stringify(data);
             // $.post("putd.php", {oktmo: idreg, djso: strm}).then(function(dat) {
@@ -151,7 +153,7 @@ function regPolygon(idreg, name)
             // 2. Создаем полигон с нужными координатами
             //var coords = place.geojson.coordinates;
             var arc;
-            if (place.geojson.type === 'MultiPolygon') {
+            if(place.geojson.type === 'MultiPolygon') {
               arc = place.geojson.coordinates;
               for (var i = 0; i < arc.length; i++) {
                 faddPolygon(arc[i], name, idreg);
@@ -324,5 +326,5 @@ function defineRegion()
     // задан регион аргументом ?regs=
     sr = strs.substr(i + strRegs.length); // регион или список регионов
   }
-  return sr.length >= 2? sr: "50"; // XX регион по-умолчанию
+  return sr.length >= 2? sr: "50000000"; // XX регион по-умолчанию
 }

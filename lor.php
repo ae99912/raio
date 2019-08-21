@@ -14,7 +14,12 @@ require_once "common.php";
 // код головного ргиона
 $a = $_REQUEST['gok'];
 $kod = str_replace("'","",$a);
-$sql = "SELECT oktmo,kratko FROM raio_oktmo WHERE oktmo LIKE '$kod%'";
+if(strlen($kod) != 8) {
+  die("неверный код ОКТМО - не 8 цифр");
+}
+$ws = substr($kod,0,2) . "______";
+
+$sql = "SELECT oktmo,kratko FROM raio_oktmo WHERE oktmo LIKE '$ws'";
 $res = queryDb($sql);
 $arr = [];
 while(list($oktmo,$kratko) = fetchRow($res)) {
