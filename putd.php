@@ -1,10 +1,8 @@
 <?php
-/**
- * Copyright (c) 2019. Aleksey Eremin
- * 19.08.2019, 14:09
- *
- */
 /*
+ * Copyright (c) 2019. Aleksey Eremin
+ * 19.08.2019
+ *
  * Положить данные в БД
  *
  */

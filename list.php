@@ -1,10 +1,8 @@
 <?php
-/**
- * Copyright (c) 2019. Aleksey Eremin
- * 18.08.2019, 16:53
- *
- */
 /*
+ * Copyright (c) 2019. Aleksey Eremin
+ * 18.08.2019
+ *
  * Выдача координат, подобно
  * https://nominatim.openstreetmap.org/search.php
  *

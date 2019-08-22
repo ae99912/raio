@@ -1,7 +1,7 @@
 <?php
-/**
+/*
  * (C) 2019. Aleksey Eremin
- * 18.08.19 23:08
+ * 18.08.19
  */
 //require_once ".mydb.php";
 //$cccmydb = array (

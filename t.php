@@ -1,9 +1,9 @@
 <?php
-/**
+/*
  * Created by PhpStorm.
  * User: ae
  * Date: 18.08.2019
- * Time: 23:33
+ *
  */
 echo <<< _EOF
 <!DOCTYPE html>
