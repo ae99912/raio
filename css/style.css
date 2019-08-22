@@ -1,0 +1,204 @@
+table.spis {
+    border-collapse: collapse;
+}
+
+thead.spis {
+    border:1px solid #4e6c6b;
+    padding: 4px;
+    background-color: #98d7a4;
+    font-size: small;
+}
+th.spis {
+    border:1px solid #4e6c6b;
+    padding: 4px;
+    background-color: #98d7a4;
+    font-size: small;
+}
+
+tr.spis {
+    border:1px solid #176c6a;
+    padding: 4px;
+}
+
+td.spis {
+    border:1px solid #176c6a;
+    padding: 4px;
+}
+
+/* уменьшенный шрифт для ИНН и ОГРН */
+.nio {
+    font-family: "Arial Narrow";
+    /* font-size: small; */
+}
+
+/* подсветить строку таблицу под мышью http://htmlbook.ru/faq/kak-sdelat-chtoby-stroka-tablitsy-menyala-tsvet */
+tbody.hightlight tr:hover {
+    background-color: #e7faf8;
+}
+
+.pn {
+    font-family: Arial;
+    font-size: small;
+    text-align: center;
+}
+
+.pnleft {
+    font-family: Arial;
+    font-size: small;
+    text-align: left;
+}
+
+tr.off, td.off {
+    color: #2a0b9b; background: #eeb98c;
+}
+
+.dataobnovl {
+    font-family: Arial;
+    font-size: small;
+    text-align: right;
+    color: darkcyan;
+}
+
+/* оператор удален */
+.del {
+    /* text-decoration: line-through; */
+    /* background-color: #bcb5f3; */
+    color: #1b1dbb;
+    opacity: 0.7;
+    font-weight: normal;
+
+}
+.del:hover::after {
+    content: attr(data-title);
+}
+
+/* информация на желтом фоне */
+.info {
+    font-family: "Calibri";
+    font-size: small;
+    color: #0000d3;
+    background-color: #e8edb5;
+}
+
+/* информация темно синими буквами */
+.infopn {
+    font-family: "Calibri";
+    font-size: small;
+    color: #151066;
+}
+
+/* без подчеркивания */
+.nounderline {
+    text-decoration: none;
+}
+
+.titlereg {
+    font-family: Arial;
+    background-color: #f1ea76;
+}
+
+.titleos {
+    font-family: Arial;
+    background-color: #63e9f1;
+}
+
+/* заголовок страницы поиска */
+.titlesearch {
+    font-family: Arial;
+    background-color: #e9f8eb;
+}
+
+/* краткое наименование */
+.shortname {
+    font-size: small;
+    font-weight: normal;
+}
+
+/* редактируемое поле */
+.edt, .edtsel {
+    background-color: #fefbdc;
+}
+
+/* редактируемое поле под мышью */
+.edt:hover, .edtsel:hover {
+    background-color: #fffea9;
+}
+
+/* номер региона у чужого документа */
+.litlereg {
+    font-family: Arial;
+    font-size: 9px;
+    color: #785bbe;
+}
+
+/* кнопка входа-выхода на списке записей */
+.inputoutput {
+    font-size: 12px;
+    color: #737cff;
+    background-color: #f0f7d1;
+    border: 1px;
+}
+
+/* текст с ИНН оператора */
+.txtinn {
+    color: #162594;
+    font-family: "Calibri";
+    /* font-size: small; */
+}
+
+/* текст с MAC адресом */
+.txtmac {
+    font-family: Calibri, sans-serif;
+}
+
+/* кнопка перехода к лицензиям РКН */
+.gotolicense {
+    font-size: 8pt;
+    color: #0b8a0e;
+    background-color: #e3edf4;
+    border: 0px solid #48a2c3;
+    border-radius: 3px;
+}
+
+
+.showdocnote {
+    font-family: Calibri, sans-serif;
+    font-size: medium;
+    color: #144f03;
+}
+
+.gotodocnote {
+    font-family: Calibri, sans-serif;
+    font-size: medium;
+    color: #e563c3;
+}
+
+table.dataTable tr.nrw td {
+    padding: 0px;
+}
+
+select.adduplink {
+    -moz-appearance: none;
+    width: 20px;
+    border: 1px solid #ccc;
+    background-color: #3ecc3c;
+    border-radius: 8px;
+}
+select.adduplink::-ms-expand {
+    display: none;
+}
+
+/* размещается в клетке таблицы spis */
+td.spis hr {
+    border: 0;
+    border-top: 1px solid #119727;
+    border-bottom: 1px solid #ffffff;
+
+}
+
+/* выделение найденного слова в search */
+.fsrc {
+    color: #188819;
+    font-weight: bold;
+    font-style: italic;
+}

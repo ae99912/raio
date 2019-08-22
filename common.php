@@ -106,6 +106,33 @@ _EOF;
 }
 
 /**
+ * Формурует начало страницы html с редактированием таблиц
+ * @param string $title    заголовок страницы
+ */
+function  printHeadPageEdt($title)
+{
+  echo <<<_EOF
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>$title</title>
+  <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css">
+  <link rel="stylesheet" type="text/css" href="css/stylefileload.css">
+  <link rel="stylesheet" type="text/css" href="css/popup.css">
+  <script type="text/javascript" language="javascript" src="js/jquery.js"></script>
+  <script type="text/javascript" language="javascript" src="js/jquery.dataTables.js"></script>
+  <script type="text/javascript" language="javascript" src="js/jquery.jeditable.js"></script>
+  <script type="text/javascript" language="javascript" src="js/vendor/jquery.ui.widget.js"></script>
+  <script type="text/javascript" language="javascript" src="js/jquery.fileupload.js"></script>
+</head>
+<body>
+
+_EOF;
+}
+
+/**
  * вывести конец страницы
  */
 function printEndPage()
