@@ -14,7 +14,7 @@ require_once "common.php";
 $a = $_REQUEST['gok'];
 $kod = str_replace("'","",$a);
 if(strlen($kod) != 8) {
-  die("неверный код ОКТМО - не 8 цифр: " . $a);
+  die("неверный код ОКТМО - не 8 цифр: '$a'");
 }
 $ws = substr($kod,0,2) . "______";
 

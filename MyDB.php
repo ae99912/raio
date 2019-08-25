@@ -3,19 +3,13 @@
  * (C) 2019. Aleksey Eremin
  * 18.08.19
  */
-//require_once ".mydb.php";
+require_once ".mydb.php";
 //$cccmydb = array (
 //    'db'   => 'имя_базы',
 //    'host' => 'адрес_хоста',
 //    'usr'  => 'пользователь',
 //    'pwd'  => 'пароль'
 //);
-$cccmydb = array (
-    'db'   => 'raio',
-    'host' => 'localhost',
-    'usr'  => 'raio',
-    'pwd'  => '1234ave5678'
-);
 
 class MyDB
     extends mysqli
