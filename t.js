@@ -62,13 +62,13 @@ function loadRegs()
 {
   // код области
   var cod = Regions.substr(0,2) + '000000';
-  //
+  // получить список под-регионов по коду региона
   $.getJSON("lor.php",{gok: cod}).done(function (data) {
     $.each(data, function (key,val) {
       // загрузить регионы и сформировать промисы
       regPolygon(val.o, val.k);
     });
-    // будем ждать  исполнения всех промисов после загрузки полигонов
+    // будем ждать исполнения всех промисов после загрузки полигонов
     Promise.all(promise_regions).then(fAllPromises);
   });
 }
@@ -133,23 +133,18 @@ function fisSelect(obj)
  */
 function regPolygon(idreg, name)
 {
-  // будем ждать "обещания, что нарисуется полигон"
+  // дадим обещание, что нарисуется полигон
   var promise_reg = new Promise(function (resolve, reject) {
     // Коды ОКТМО и ОКАТО
     // https://classifikators.ru/oktmo/
     // Nominatim поисковая машина на OpenStreetMap
     // http://nominatim.openstreetmap.org/search/
-    // url = "http://nominatim.openstreetmap.org/search";
+    // получить координаты полигона для заданного региона
     $.getJSON("que.php", {q: idreg}) // {q: query, format: "json", polygon_geojson: 1, polygon_threshold: 0.001}
       .done(function (data) {
-        // получили JSON данные, будем перебирать
+        // получили JSON данные, будем перебирать полигоны
         $.each(data, function (ix, place) {
           if("relation" === place.osm_type) {
-            // положим в БД данные о регионе
-            // var strm = JSON.stringify(data);
-            // $.post("putd.php", {oktmo: idreg, djso: strm}).then(function(dat) {
-            //   console.log("обновим данные по региону: " + idreg);
-            // });
             // 2. Создаем полигон с нужными координатами
             //var coords = place.geojson.coordinates;
             var arc;
@@ -287,7 +282,6 @@ function coordinateswap(coordinates)
   //   Cpoint[1] = (MyBounds[0][1] + MyBounds[1][1])/2;
   // }
 }
-
 
 /**
  * Получить цвет объекта из коллекции
