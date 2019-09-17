@@ -2,7 +2,7 @@
  * Copyright (c) 2019. Aleksey Eremin
  *
  * 2019-08-19
- *
+ * 2019-09-17
  */
 
 /*
@@ -63,7 +63,7 @@ function loadRegs()
   // код области
   var cod = Regions.substr(0,2) + '000000';
   // получить список под-регионов по коду региона
-  $.getJSON("lor.php",{gok: cod}).done(function (data) {
+  $.getJSON("lor.php",{gok: cod, level: 100}).done(function (data) {
     $.each(data, function (key,val) {
       // загрузить регионы и сформировать промисы
       regPolygon(val.o, val.k);
@@ -161,10 +161,12 @@ function regPolygon(idreg, name)
           }
         });
         resolve("добавили " + idreg);
+        // console.log("добавили " + idreg);
       })
       .fail(function (xhr, textStatus, errorThrow) {
         console.log("error: " + textStatus + " " + errorThrow);
         resolve("ошибка чтения региона " + idreg);
+        console.log("ошибка чтения региона " + idreg);
       });
   });
   // запомним

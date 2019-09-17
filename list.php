@@ -6,6 +6,9 @@
  * Выдача координат, подобно
  * https://nominatim.openstreetmap.org/search.php
  *
+ * Коды ОКТМО
+ * https://classifikators.ru/oktmo/
+ *
  */
 
 require_once "common.php";

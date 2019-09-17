@@ -13,12 +13,18 @@ require_once "common.php";
 // код головного ргиона
 $a = $_REQUEST['gok'];
 $kod = str_replace("'","",$a);
-if(strlen($kod) != 8) {
-  die("неверный код ОКТМО - не 8 цифр: '$a'");
+$level = intval($_REQUEST['level']);
+if($level == 100) {
+  // высший уровень - страна
+  $ws = "level=100";
+} else {
+  if (strlen($kod) != 8) {
+    die("неверный код ОКТМО - не 8 цифр: '$a'");
+  }
+  $ws = "oktmo LIKE '" . substr($kod, 0, 2) . "______'";
 }
-$ws = substr($kod,0,2) . "______";
 
-$sql = "SELECT oktmo,kratko FROM raio_oktmo WHERE oktmo LIKE '$ws'";
+$sql = "SELECT oktmo,kratko FROM raio_oktmo WHERE $ws";
 $res = queryDb($sql);
 $arr = [];
 while(list($oktmo,$kratko) = fetchRow($res)) {
