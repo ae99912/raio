@@ -14,7 +14,7 @@ CREATE TABLE raio_oktmo (
   zapros  varchar(255)  COMMENT 'строка запроса к nominatim.openstreetmap.org',
   geojson longtext      COMMENT 'строка JSON полигона',
   kratko  varchar(128)  COMMENT 'краткое название региона',
-  level   int           COMMENT 'уровень региона 100-высший',
+  lvl     int           COMMENT 'уровень региона 100-высший',
   wdat    timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'время записи'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='гео данные регионов ОКТМО';
 

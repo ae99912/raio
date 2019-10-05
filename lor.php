@@ -16,7 +16,7 @@ $kod = str_replace("'","",$a);
 $level = intval($_REQUEST['level']);
 if($level == 100) {
   // высший уровень - страна
-  $ws = "level=100";
+  $ws = "lvl=100";
 } else {
   if (strlen($kod) != 8) {
     die("неверный код ОКТМО - не 8 цифр: '$a'");
