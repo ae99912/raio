@@ -24,7 +24,7 @@ if($level == 100) {
   $ws = "oktmo LIKE '" . substr($kod, 0, 2) . "______'";
 }
 
-$sql = "SELECT oktmo,kratko FROM raio_oktmo WHERE $ws";
+$sql = "SELECT oktmo,kratko FROM sibwill_raio_oktmo WHERE $ws";
 $res = queryDb($sql);
 $arr = [];
 while(list($oktmo,$kratko) = fetchRow($res)) {

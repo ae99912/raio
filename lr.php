@@ -12,7 +12,7 @@ require_once "common.php";
 
 $ws = "__000000";
 
-$sql = "SELECT oktmo,kratko FROM raio_oktmo WHERE oktmo LIKE '$ws'";
+$sql = "SELECT oktmo,kratko FROM sibwill_raio_oktmo WHERE oktmo LIKE '$ws'";
 $res = queryDb($sql);
 $arr = [];
 while(list($oktmo,$kratko) = fetchRow($res)) {

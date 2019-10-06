@@ -14,7 +14,7 @@ require_once ".proxy.php";
 
 $kod = $_REQUEST['q'];  // код ОКТМО
 $kodi = str_replace("'","",$kod);
-$sql = "SELECT zapros,geojson FROM raio_oktmo WHERE oktmo='$kodi'";
+$sql = "SELECT zapros,geojson FROM sibwill_raio_oktmo WHERE oktmo='$kodi'";
 $res = queryDb($sql);
 list($zapros,$geojson) = fetchRow($res);
 if(empty($geojson) || strlen($geojson)<32) {
@@ -26,7 +26,7 @@ if(empty($geojson) || strlen($geojson)<32) {
     $uri = $url . $sa . $sq;
     $geo = getURI($uri);
     if(strlen($geo) > 255) {
-      $stmt = $My_Db -> prepare("UPDATE raio_oktmo SET geojson=? WHERE oktmo='$kodi';");
+      $stmt = $My_Db -> prepare("UPDATE sibwill_raio_oktmo SET geojson=? WHERE oktmo='$kodi';");
       $stmt->bind_param('s', $geo);
       $stmt->execute();
 //      if($stmt->execute()) {

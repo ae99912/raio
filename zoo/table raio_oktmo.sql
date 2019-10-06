@@ -8,7 +8,7 @@
 -- Структура таблицы `raio_oktmo`
 --
 
-CREATE TABLE raio_oktmo (
+CREATE TABLE sibwill_raio_oktmo (
   oktmo   varchar(32)   PRIMARY KEY COMMENT 'код ОКТМО региона',
   okato   varchar(32)   COMMENT 'код ОКАТО',
   zapros  varchar(255)  COMMENT 'строка запроса к nominatim.openstreetmap.org',

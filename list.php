@@ -17,7 +17,7 @@ printHeadPage("Данные ГЕО");
 
 // дополнительно подсчитаем кол-во документов
 $sql ="SELECT oktmo, zapros,kratko,SUBSTRING(geojson,1,64)
-       FROM raio_oktmo";
+       FROM sibwill_raio_oktmo";
 echo "</tbody></table>\n";
 echo <<<_EOF
 <table width="100%" class="spis" id="myTable">
