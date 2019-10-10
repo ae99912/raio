@@ -4,7 +4,7 @@
  * 20.08.2019
  *
  *  Выдать список под-регионов по главному коду
- * спиcок состоит из кода региона и краткого наименнования
+ * спиcок состоит из кода региона и краткого наименования
  * ?gok=17
  * [ {o: код_ОКТМО, k: краткое_название}, ...]
  *
@@ -13,18 +13,18 @@ require_once "common.php";
 // код головного ргиона
 $a = $_REQUEST['gok'];
 $kod = str_replace("'","",$a);
-$level = intval($_REQUEST['level']);
-if($level == 100) {
-  // высший уровень - страна
-  $ws = "level=100";
+$kr = substr($kod,0,2);
+if(intval($kr) != 0) {
+  $kr1 = $kr . '______';
+  $kr2 = $kr . '000000';
+  $ws = "oktmo LIKE '$kr1' AND oktmo != $kr2";
 } else {
-  if (strlen($kod) != 8) {
-    die("неверный код ОКТМО - не 8 цифр: '$a'");
-  }
-  $ws = "oktmo LIKE '" . substr($kod, 0, 2) . "______'";
+  // если 0 - то регионы страны
+  $ws = "lvl=100";
 }
 
-$sql = "SELECT oktmo,kratko FROM raio_oktmo WHERE $ws";
+
+$sql = "SELECT oktmo,kratko FROM sibwill_raio_oktmo WHERE $ws";
 $res = queryDb($sql);
 $arr = [];
 while(list($oktmo,$kratko) = fetchRow($res)) {

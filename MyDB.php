@@ -24,6 +24,12 @@ class MyDB
     if($this->connect_errno) {
       die("?-Error-Ошибка открытия БД");
     }
+    // русификация вывода из MySql
+    // https://dev.mysql.com/doc/refman/5.5/en/charset-connection.html
+    $this -> query("SET NAMES 'utf8';");
+    // $this -> query("SET CHARACTER SET 'utf8';");
+    // $this -> query("SET SESSION collation_connection='utf8_general_ci';");
+
   }
 
   function __destruct()

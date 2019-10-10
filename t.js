@@ -13,13 +13,19 @@
  Пример Яндекс-карты
  https://tech.yandex.ru/maps/jsbox/2.1/regions
 
+ Если указан ОКТМО 0, то рисуются все регионы
+ Если указан ОКТМО региона или первые 2 цифры кода, то выводится регион
+ Если указан ОКТМО района, то выводится соостветствующий регион и подсвечиваются указанные районы
+
  */
+
 var strRegs = '?regs=';           // аргумент параметров под-"регионы"
 var Map1;
 var colorSelect  = '#aa1314';
 var colorNoselect = '#3f3fa2';
 var strKeyMetka = '0305396879554012335'; // ключевая метка для наших полигонов
 var Regions = defineRegion();  // определить регионы картирования (2 цифры)
+var Regions0 = Regions.substr(0,2); // регион или список регионов;     // начальный набор
 var promise_regions = [];   // массив обещаний
 var MyBounds = [[],[]];     // границы регионов
 //
@@ -63,7 +69,7 @@ function loadRegs()
   // код области
   var cod = Regions.substr(0,2) + '000000';
   // получить список под-регионов по коду региона
-  $.getJSON("lor.php",{gok: cod, level: 100}).done(function (data) {
+  $.getJSON("lor.php",{gok: cod}).done(function (data) {
     $.each(data, function (key,val) {
       // загрузить регионы и сформировать промисы
       regPolygon(val.o, val.k);
@@ -220,6 +226,10 @@ function fgetSelectedRegions()
     str = par + str + sep + key;
     sep = ','; par = '';
   });
+  // если выбранных регионов-районов нет, установим начальный регион
+  if(str.length < 3) {
+    str = par + Regions0;
+  }
   return str;
 }
 
@@ -322,5 +332,5 @@ function defineRegion()
     // задан регион аргументом ?regs=
     sr = strs.substr(i + strRegs.length); // регион или список регионов
   }
-  return sr.length >= 2? sr: "50000000"; // XX регион по-умолчанию
+  return sr.length >= 2? sr: "00"; // XX регион по-умолчанию
 }
