@@ -7,7 +7,7 @@
  */
 
 var strRegs = '?regs=';           // аргумент параметров под-"регионы"
-var Map1;
+var Map1 = null;
 var colorSelect  = '#aa1314';
 var colorNoselect = '#3f3fa2';
 var strKeyMetka = '0305396879554012335'; // ключевая метка для наших полигонов
@@ -54,6 +54,7 @@ function f1() {
  */
 function loadRegs()
 {
+  clearMyRegions();
   // код области
   var cod = Regions.substr(0,2) + '000000';
   // получить список под-регионов по коду региона
@@ -321,4 +322,22 @@ function defineRegion()
     sr = strs.substr(i + strRegs.length); // регион или список регионов
   }
   return sr.length >= 2? sr: "00"; // XX регион по-умолчанию
+}
+
+/**
+ * Удалить мои регионы с карты
+ */
+function clearMyRegions()
+{
+  if(Map1 == null) return;
+  var arr = [];
+  Map1.geoObjects.each(function (elm) {
+    if(isMyPolygon(elm)) {
+      arr.push(elm);
+      //Map1.geoObjects.remove(elm);
+    }
+  });
+  for(var i = 0; i < arr.length; i++) {
+    Map1.geoObjects.remove(arr[i]);
+  }
 }

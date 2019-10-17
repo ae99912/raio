@@ -28,7 +28,8 @@ $(document).ready(function() {
 
 function my_module_javascript_function()
 {
-		alert('При запуске страницы выводим карту с уровнем '+phpObj_1+' с местностью '+phpStr);
+	alert('При запуске страницы выводим карту с уровнем '+phpObj_1+' с местностью '+phpStr);
+
 }
 
 function myfunction_2() {
@@ -101,6 +102,8 @@ function myfunction() {
 	    else
 	    {
 	    	alert('Вывести карту России без выбранных регионов');
+				Regions = "00";
+				loadRegs();
 	    }
 	    break;
 
