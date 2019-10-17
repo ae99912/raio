@@ -271,10 +271,12 @@ function coordinateswap(coordinates)
       MyBounds[0][0] = MyBounds[1][0] = point[0];
       MyBounds[0][1] = MyBounds[1][1] = point[1];
     } else {
-      MyBounds[0][0] = Math.min(point[0], MyBounds[0][0]);
-      MyBounds[0][1] = Math.min(point[1], MyBounds[0][1]);
-      MyBounds[1][0] = Math.max(point[0], MyBounds[1][0]);
-      MyBounds[1][1] = Math.max(point[1], MyBounds[1][1]);
+      if(point[0] > 0 && point[1] > 0) {
+        MyBounds[0][0] = Math.min(point[0], MyBounds[0][0]);
+        MyBounds[0][1] = Math.min(point[1], MyBounds[0][1]);
+        MyBounds[1][0] = Math.max(point[0], MyBounds[1][0]);
+        MyBounds[1][1] = Math.max(point[1], MyBounds[1][1]);
+      }
     }
     //cnt++;
   });
